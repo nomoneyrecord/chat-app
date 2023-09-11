@@ -1,7 +1,7 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Login() {
+function Login({ onLogin }) {
   return (
     <div className="container-fluid" style={{ minHeight: '100vh', backgroundColor: '#333333', paddingTop: '50px' }}>
       <div className="row h-100 no-gutters">
@@ -10,13 +10,13 @@ function Login() {
             <div className="card-body text-center">
               <h1 className="login-header">Chat Room Log In</h1>
               <form className="form-group">
-                <input type="text" className="form-control" placeholder="Username" required/>
+                <input type="text" className="form-control" placeholder="Username" />
                 <br />
-                <input type="password" className="form-control" placeholder="Password" required/>
+                <input type="password" className="form-control" placeholder="Password" />
                 <br />
-                <button className="btn btn-primary w-50 mx-auto">Log In</button>
+                <button className="btn btn-primary w-50 mx-auto" onClick={onLogin}>Log In</button>
                 <br />
-                <a href="" className="d-block" style={{ marginTop: '20px' }}>Forgot Password?</a>
+                <a href="" className="d-block" style={{ marginTop: '5px' }}>Forgot Password?</a>
               </form>
             </div>
           </div>

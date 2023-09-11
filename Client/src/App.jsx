@@ -1,14 +1,23 @@
-import { useState } from 'react'
-import Login from './Pages/Login'
+import { useState } from 'react';
+import Login from './Pages/Login';
+import HomePage from './Pages/Home'; 
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   return (
     <>
-      <Login />
+      {isLoggedIn ? <HomePage onLogout={handleLogout} /> : <Login onLogin={handleLogin} />}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
