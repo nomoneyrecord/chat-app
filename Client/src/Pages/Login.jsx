@@ -10,9 +10,9 @@ function Login() {
             <div className="card-body text-center">
               <h1 className="login-header">Chat Room Log In</h1>
               <form className="form-group">
-                <input type="text" className="form-control" placeholder="Username" />
+                <input type="text" className="form-control" placeholder="Username" required/>
                 <br />
-                <input type="password" className="form-control" placeholder="Password" />
+                <input type="password" className="form-control" placeholder="Password" required/>
                 <br />
                 <button className="btn btn-primary w-50 mx-auto">Log In</button>
                 <br />
