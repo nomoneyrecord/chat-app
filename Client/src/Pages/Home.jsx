@@ -1,18 +1,19 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-function Home() {
+function Home({ onLogout }) {
   return (
     <div className="container-fluid" style={{ height: '100vh', backgroundColor: '#333' }}>
-      <Header />
+      <Header onLogout={onLogout} />
       <Main />
     </div>
   );
 }
 
+
 function Header({ onLogout }) {
   return (
-    <div className="d-flex justify-content-between p-3" style={{ backgroundColor: '#444' }}>
+    <div className="d-flex justify-content-between p-3" style={{ backgroundColor: '#444', height: '60px' }}>
       <div className="text-white">Chat App Logo</div>
       <button className="btn btn-light" onClick={onLogout}>Logout</button>
     </div>
@@ -41,15 +42,17 @@ function ChatList() {
 
 function ChatWindow() {
   return (
-    <div className="w-75 p-3 d-flex flex-column" style={{ backgroundColor: '#666' }}>
-      <div className="flex-grow-1" style={{ overflowY: 'auto' }}>
+    <div className="w-75 p-3 d-flex flex-column" style={{ backgroundColor: '#666', height: 'calc(100vh - 60px)' }}>
+      <div className="flex-grow-1 mb-3" style={{ overflowY: 'auto' }}>
         {/* Add chat messages here */}
       </div>
-      <div className="mt-3">
+      <div className="d-flex">
         <input type="text" className="form-control" placeholder="Type a message" />
+        <button className="btn btn-primary ml-2">Send</button>
       </div>
     </div>
   );
 }
+
 
 export default Home;
