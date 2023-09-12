@@ -35,7 +35,6 @@ function ChatList() {
     <div className="w-25 p-3" style={{ backgroundColor: '#555' }}>
       <div className="text-white">Chat Room 1</div>
       <div className="text-white">Chat Room 2</div>
-      {/* Add more chat rooms as needed */}
     </div>
   );
 }
