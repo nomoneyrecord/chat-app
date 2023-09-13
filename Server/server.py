@@ -29,5 +29,17 @@ def create_message():
   dummy_data['messages'].append(new_message)
   return jsonify(new_message), 201
 
+@app.route('/api/users', methods=['GET'])
+def get_users():
+  return jsonify(dummy_data['users'])
+
+@app.route('/api/users', methods=['POST'])
+def create_user():
+  new_user = request.get_json()
+  new_id = len(dummy_data['users']) + 1
+  new_user['id'] = new_id
+  dummy_data['users'].append(new_user)
+  return jsonify(new_user), 201
+  
 if __name__ == '__main__':
   app.run(debug=True)
