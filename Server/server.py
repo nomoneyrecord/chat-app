@@ -11,8 +11,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-db = SQLAlchemy(app)
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -23,44 +21,44 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.String(120), nullable=False)
 
-@app.route('/')
-def hello():
-  return "Hello, World!"
-
-dummy_data = {
-  "users": [
-    {"id": 1, "username": "user1", "password": "pass1"},
-    {"id": 2, "username": "user2", "password": "pass2"}  
-  ],
-  "messages": [
-    {"id": 1, "user_id": 1, "message": "Hello World!"},
-    {"id": 2, "user_id": 2, "message": "Hi there!"}
-  ]
-}
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
-  return jsonify(dummy_data['messages'])
+    try:
+        messages = Message.query.all()
+        return jsonify([{'id': msg.id, 'user_id': msg.user_id, 'message': msg.message} for msg in messages]), 200
+    except Exception as e:
+        return jsonify(str(e)), 500
 
 @app.route('/api/messages', methods=['POST'])
 def create_message():
-  new_message = request.get_json()
-  new_id = len(dummy_data['messages']) + 1
-  new_message['id'] = new_id
-  dummy_data['messages'].append(new_message)
-  return jsonify(new_message), 201
+    try:
+        new_message_data = request.get_json()
+        new_message = Message(user_id=new_message_data['user_id'], message=new_message_data['message'])
+        db.session.add(new_message)
+        db.session.commit()
+        return jsonify({'id': new_message.id, 'user_id': new_message.user_id, 'message': new_message.message}), 201
+    except Exception as e:
+        return jsonify(str(e)), 500
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
-  return jsonify(dummy_data['users'])
+    try:
+        users = User.query.all()
+        return jsonify([{'id': user.id, 'username': user.username, 'password': user.password} for user in users]), 200
+    except Exception as e:
+        return jsonify(str(e)), 500
 
 @app.route('/api/users', methods=['POST'])
 def create_user():
-  new_user = request.get_json()
-  new_id = len(dummy_data['users']) + 1
-  new_user['id'] = new_id
-  dummy_data['users'].append(new_user)
-  return jsonify(new_user), 201
+    try:
+        new_user_data = request.get_json()
+        new_user = User(username=new_user_data['username'], password=new_user_data['password'])
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'id': new_user.id, 'username': new_user.username, 'password': new_user.password}), 201
+    except Exception as e:
+        return jsonify(str(e)), 500
   
 if __name__ == '__main__':
   app.run(debug=True)

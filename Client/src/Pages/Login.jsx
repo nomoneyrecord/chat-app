@@ -1,6 +1,20 @@
 import React from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+const [username, setUsername] = React.useState("");
+const [password, setPassword] = React.useState("");
+
+function handleLogin() {
+  axios.post("api/users", { username, password })
+  .then(response => {
+    console.log(response.data);
+    onLogin();
+  })
+  .catch(error => {
+    console.error("Error logging in:", error);
+  });
+}
+
 function Login({ onLogin }) {
   return (
     <div className="container-fluid" style={{ minHeight: '100vh', backgroundColor: '#333333', paddingTop: '50px' }}>
@@ -10,11 +24,11 @@ function Login({ onLogin }) {
             <div className="card-body text-center">
               <h1 className="login-header">Chat Room Log In</h1>
               <form className="form-group">
-                <input type="text" className="form-control" placeholder="Username" />
+                <input type="text" className="form-control" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
                 <br />
-                <input type="password" className="form-control" placeholder="Password" />
+                <input type="password" className="form-control" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
                 <br />
-                <button className="btn btn-primary w-50 mx-auto" onClick={onLogin}>Log In</button>
+                <button className="btn btn-primary w-50 mx-auto" onClick={handleLogin}>Log In</button>
                 <br />
                 <a href="" className="d-block" style={{ marginTop: '5px' }}>Forgot Password?</a>
               </form>
