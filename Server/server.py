@@ -2,13 +2,17 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
+from flask_jwt_extended import JWTManager
+
+
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['JWT_SECRET_KEY'] = 'sadkjhf23eliua79782gfghlf'
+jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
 class User(db.Model):
