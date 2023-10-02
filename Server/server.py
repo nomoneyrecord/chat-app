@@ -1,17 +1,21 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import JWTManager, create_access_token
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
 import os
-from flask_jwt_extended import JWTManager
 
 
+
+os.getenv('JWT_SECRET_KEY')
 
 load_dotenv()
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = 'sadkjhf23eliua79782gfghlf'
+app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
 
@@ -25,6 +29,46 @@ class Message(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.String(120), nullable=False)
 
+@app.route('/api/register', methods=['POST'])
+def register_user():
+    try:
+        new_user_data = request.get_json()
+        username = new_user_data['username']
+        password = new_user_data['password']  
+
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return jsonify({'msg': 'Username already exists'}), 400
+        
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')  
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        return jsonify({'id': new_user.id, 'username': new_user.username}), 201
+    except Exception as e: 
+        return jsonify({'msg': 'Error creating user'}), 500
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+    
+    username = request.json.get('username', None)
+    password = request.json.get('password', None)
+    
+    if not username or not password:
+        return jsonify({"msg": "Missing username or password"}), 400
+    
+    user = User.query.filter_by(username=username).first()
+    
+    if user and user.password == password:
+        access_token = create_access_token(identity={'username': username})
+        return jsonify(access_token=access_token), 200
+    
+    return jsonify({"msg": "Bad username or password"}), 401
+        
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
