@@ -5,6 +5,7 @@ import axios from "axios";
 function Login({ onLogin }) {
 const [username, setUsername] = React.useState("");
 const [password, setPassword] = React.useState("");
+const [error, setError] = React.useState("");
 
 function handleLogin() {
   axios.post("http://127.0.0.1:5000/login", { username, password })
@@ -12,9 +13,11 @@ function handleLogin() {
     console.log(response.data);
     localStorage.setItem('token', response.data.access_token);
     onLogin();
+    setError("");
   })
   .catch(error => {
     console.error("Error logging in:", error);
+    setError("Invalid login credentials");
   });
 }
 
@@ -25,6 +28,7 @@ function handleLogin() {
           <div className="card w-100 h-100 d-flex align-items-center" style={{ borderRight: 'none', borderRadius: '0' }}>
             <div className="card-body text-center">
               <h1 className="login-header">Chat Room Log In</h1>
+              {error && <p style={{color: 'red'}}>{error}</p>}
               <form className="form-group">
                 <input type="text" className="form-control" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
                 <br />
