@@ -7,9 +7,10 @@ const [username, setUsername] = React.useState("");
 const [password, setPassword] = React.useState("");
 
 function handleLogin() {
-  axios.post("api/users", { username, password })
+  axios.post("http://127.0.0.1:5000/login", { username, password })
   .then(response => {
     console.log(response.data);
+    localStorage.setItem('token', response.data.access_token);
     onLogin();
   })
   .catch(error => {

@@ -5,10 +5,6 @@ from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 import os
 
-
-
-os.getenv('JWT_SECRET_KEY')
-
 load_dotenv()
 
 app = Flask(__name__)
@@ -34,21 +30,21 @@ def register_user():
     try:
         new_user_data = request.get_json()
         username = new_user_data['username']
-        password = new_user_data['password']  
+        password = new_user_data['password']
 
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return jsonify({'msg': 'Username already exists'}), 400
         
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')  
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
         return jsonify({'id': new_user.id, 'username': new_user.username}), 201
-    except Exception as e: 
+    except Exception as e:
+        print(e)  
         return jsonify({'msg': 'Error creating user'}), 500
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -63,12 +59,11 @@ def login():
     
     user = User.query.filter_by(username=username).first()
     
-    if user and user.password == password:
+    if user and bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity={'username': username})
         return jsonify(access_token=access_token), 200
     
     return jsonify({"msg": "Bad username or password"}), 401
-        
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
@@ -76,7 +71,8 @@ def get_messages():
         messages = Message.query.all()
         return jsonify([{'id': msg.id, 'user_id': msg.user_id, 'message': msg.message} for msg in messages]), 200
     except Exception as e:
-        return jsonify(str(e)), 500
+        print(e)
+        return jsonify({'msg': 'Internal Server Error'}), 500
 
 @app.route('/api/messages', methods=['POST'])
 def create_message():
@@ -87,26 +83,17 @@ def create_message():
         db.session.commit()
         return jsonify({'id': new_message.id, 'user_id': new_message.user_id, 'message': new_message.message}), 201
     except Exception as e:
-        return jsonify(str(e)), 500
+        print(e)
+        return jsonify({'msg': 'Internal Server Error'}), 500
 
 @app.route('/api/users', methods=['GET'])
 def get_users():
     try:
         users = User.query.all()
-        return jsonify([{'id': user.id, 'username': user.username, 'password': user.password} for user in users]), 200
+        return jsonify([{'id': user.id, 'username': user.username} for user in users]), 200
     except Exception as e:
-        return jsonify(str(e)), 500
+        print(e)
+        return jsonify({'msg': 'Internal Server Error'}), 500
 
-@app.route('/api/users', methods=['POST'])
-def create_user():
-    try:
-        new_user_data = request.get_json()
-        new_user = User(username=new_user_data['username'], password=new_user_data['password'])
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify({'id': new_user.id, 'username': new_user.username, 'password': new_user.password}), 201
-    except Exception as e:
-        return jsonify(str(e)), 500
-  
 if __name__ == '__main__':
-  app.run(debug=True)
+    app.run(debug=True)
