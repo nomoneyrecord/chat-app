@@ -56,7 +56,7 @@ function Header({ onLogout }) {
 
   const handleLogoutClick = () => {
     onLogout();
-    navigate.push('/login'); 
+    navigate('/login'); 
   }
 
   return (

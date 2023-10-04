@@ -52,13 +52,13 @@ function Login({ onLogin }) {
     setError("");
 
     axios
-      .post("http://127.0.0.1:5000/login", { username, password })
+      .post("http://127.0.0.1:5000/api/login", { username, password })
       .then((response) => {
         console.log(response.data);
         localStorage.setItem("token", response.data.access_token);
         onLogin();
         setLoading(false);
-        navigate.push('/');
+        navigate('/');
       })
       .catch((error) => {
         console.error("Error logging in:", error);
