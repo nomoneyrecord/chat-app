@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { Modal, Button, Form } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState("");
@@ -12,6 +13,8 @@ function Login({ onLogin }) {
   const [newUserName, setNewUsername] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [signUpError, setSignUpError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleClose = () => {
     setShow(false);
@@ -55,11 +58,16 @@ function Login({ onLogin }) {
         localStorage.setItem("token", response.data.access_token);
         onLogin();
         setLoading(false);
+        navigate.push('/');
       })
       .catch((error) => {
         console.error("Error logging in:", error);
         setLoading(false);
-        setError(error.response ? error.response.data.msg : "Network error");
+        if(error.response && error.response.data && error.response.data.msg){
+          setError(error.response.data.msg);
+        } else {
+        setError("Network error");
+        }
       });
   };
 

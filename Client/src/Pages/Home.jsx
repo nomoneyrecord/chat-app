@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
 function Home({ onLogout }) {
   const [users, setUsers] = useState([]);
@@ -51,10 +52,17 @@ function Home({ onLogout }) {
 }
 
 function Header({ onLogout }) {
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    onLogout();
+    navigate.push('/login'); 
+  }
+
   return (
     <div className="d-flex justify-content-between p-3" style={{ backgroundColor: '#444', height: '60px' }}>
       <div className="text-white">Chat App Logo</div>
-      <button className="btn btn-light" onClick={onLogout}>Logout</button>
+      <button className="btn btn-light" onClick={handleLogoutClick}>Logout</button>
     </div>
   );
 }
