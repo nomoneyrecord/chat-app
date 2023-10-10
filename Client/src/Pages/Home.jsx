@@ -27,14 +27,26 @@ function Home({ onLogout }) {
   }, []);
 
   function handleSendMessage() {
-    axios.post('/api/messages', { user_id: 1, message: newMessage })
-      .then(response => {
-        setMessages([...messages, response.data]);
-        setNewMessage("");
-      })
-      .catch(error => {
-        console.error("Error sending message:", error);
-      });
+    console.log('handleSendMessage is called')
+    console.log('newMessage:', newMessage); 
+    if (newMessage.trimEnd() !== "") {  
+      const user_id = parseInt(localStorage.getItem("user_id"), 10);
+      console.log('user_id:', user_id);
+      if (isNaN(user_id)) {
+        console.error("Invalid user_id:", localStorage.getItem("user_id"));
+        return; 
+      }
+      console.log({ user_id, message: newMessage });
+      axios.post('/api/messages', { user_id, message: newMessage })
+        .then(response => {
+          setMessages([...messages, response.data]);
+          setNewMessage("");
+        })
+        .catch(error => {
+          console.error("Error sending message:", error);
+          console.log(error.response);
+        });
+    }
   }
 
   return (
@@ -69,7 +81,7 @@ function Header({ onLogout }) {
 
 function Main({ users, messages, newMessage, setNewMessage, handleSendMessage }) {
   return (
-    <div className="d-flex h-100">
+    <div className="d-flex h-auto text-white" >
       <ChatList />
       <ChatWindow 
         users={users} 
@@ -92,16 +104,22 @@ function ChatList() {
 }
 
 function ChatWindow({ users, messages, newMessage, setNewMessage, handleSendMessage }) {
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleSendMessage();
+  };
+
   return (
     <div className="w-75 p-3 d-flex flex-column" style={{ backgroundColor: '#666', height: 'calc(100vh - 60px)' }}>
-      <div className="flex-grow-1 mb-3" style={{ overflowY: 'auto' }}>
+      <div className="flex-grow-1 mb-3 overflow-auto" style={{ maxHeight: 'calc(100vh - 120px)' }}>
         {messages.map(message => (
           <div key={message.id}>
-            {users.find(user => user.id === message.user_id)?.username}: {message.message}
+            {message.username}: {message.message}
           </div>
         ))}
       </div>
-      <div className="d-flex">
+      <form onSubmit={handleSubmit} className="d-flex">
         <input 
           type="text" 
           className="form-control" 
@@ -110,9 +128,10 @@ function ChatWindow({ users, messages, newMessage, setNewMessage, handleSendMess
           onChange={e => setNewMessage(e.target.value)} 
         />
         <button className="btn btn-primary ml-2" onClick={handleSendMessage}>Send</button>
-      </div>
+      </form>
     </div>
   );
 }
+
 
 export default Home;

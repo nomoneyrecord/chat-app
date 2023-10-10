@@ -64,29 +64,35 @@ def login():
     
     if user and bcrypt.check_password_hash(user.password, password):
         access_token = create_access_token(identity={'username': username})
-        return jsonify(access_token=access_token), 200
+        return jsonify(access_token=access_token, user_id=user.id), 200
     
     return jsonify({"msg": "Bad username or password"}), 401
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
     try:
-        messages = Message.query.all()
-        return jsonify([{'id': msg.id, 'user_id': msg.user_id, 'message': msg.message} for msg in messages]), 200
+        messages = db.session.query(
+            Message.id, Message.message, User.username
+        ).join(
+            User, User.id == Message.user_id
+        ).all()
+        return jsonify([{'id': msg.id, 'message': msg.message, 'username': msg.username} for msg in messages]), 200
     except Exception as e:
         print(e)
+        print("Error occured while trying to get messages")
         return jsonify({'msg': 'Internal Server Error'}), 500
 
 @app.route('/api/messages', methods=['POST'])
 def create_message():
     try:
         new_message_data = request.get_json()
+        print(f"Received data: {new_message_data}")
         new_message = Message(user_id=new_message_data['user_id'], message=new_message_data['message'])
         db.session.add(new_message)
         db.session.commit()
         return jsonify({'id': new_message.id, 'user_id': new_message.user_id, 'message': new_message.message}), 201
     except Exception as e:
-        print(e)
+        print(f"Error: {e}")
         return jsonify({'msg': 'Internal Server Error'}), 500
 
 @app.route('/api/users', methods=['GET'])
@@ -96,6 +102,7 @@ def get_users():
         return jsonify([{'id': user.id, 'username': user.username} for user in users]), 200
     except Exception as e:
         print(e)
+        print("Error occurred while trying to get users")
         return jsonify({'msg': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':

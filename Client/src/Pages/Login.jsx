@@ -56,6 +56,8 @@ function Login({ onLogin }) {
       .then((response) => {
         console.log(response.data);
         localStorage.setItem("token", response.data.access_token);
+        localStorage.setItem("user_id", response.data.user_id ? response.data.user_id.toString() : "");
+        localStorage.setItem("username", username); 
         onLogin();
         setLoading(false);
         navigate('/');
