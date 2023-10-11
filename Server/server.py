@@ -90,7 +90,13 @@ def create_message():
         new_message = Message(user_id=new_message_data['user_id'], message=new_message_data['message'])
         db.session.add(new_message)
         db.session.commit()
-        return jsonify({'id': new_message.id, 'user_id': new_message.user_id, 'message': new_message.message}), 201
+
+        user = User.query.get(new_message.user_id)
+        if user is None:
+            print("Error: User not found")
+            return jsonify({'msg': 'Internal Server Error'}), 500
+
+        return jsonify({'id': new_message.id, 'username': user.username,'message': new_message.message}), 201
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({'msg': 'Internal Server Error'}), 500

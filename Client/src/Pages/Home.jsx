@@ -19,6 +19,7 @@ function Home({ onLogout }) {
 
     axios.get('/api/messages')
       .then(response => {
+        console.log('Received messages:', response.data);
         setMessages(response.data);
       })
       .catch(error => {
