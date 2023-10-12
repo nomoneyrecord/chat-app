@@ -39,9 +39,9 @@ function Login({ onLogin }) {
       .catch((error) => {
         console.error("Error signing up:", error);
         if (error.response && error.response.data && error.response.data.msg) {
-          setSignUpError(error.response.data.msg); // set error message from server
+          setSignUpError(error.response.data.msg);
         } else {
-          setSignUpError("Error during sign up"); // set generic error message
+          setSignUpError("Error during sign up");
         }
       });
   };

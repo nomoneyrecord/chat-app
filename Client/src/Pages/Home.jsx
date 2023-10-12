@@ -3,12 +3,15 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
 
+console.log("Home mounted");
+
 function Home({ onLogout }) {
   const [users, setUsers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
 
   useEffect(() => {
+    console.log("Fetching messages...")
     axios.get('/api/users')
       .then(response => {
         setUsers(response.data);
@@ -99,7 +102,6 @@ function ChatList() {
   return (
     <div className="w-25 p-3" style={{ backgroundColor: '#555' }}>
       <div className="text-white">Chat Room 1</div>
-      <div className="text-white">Chat Room 2</div>
     </div>
   );
 }
