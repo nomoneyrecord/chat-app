@@ -4,11 +4,13 @@ from flask_jwt_extended import JWTManager, create_access_token
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
+from flask_socketio import SocketIO
 import os
 
 load_dotenv()
 
 app = Flask(__name__)
+socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
@@ -26,6 +28,19 @@ class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     message = db.Column(db.String(120), nullable=False)
+
+@socketio.on('send_message')
+def handle_message(data):
+    new_message = Message(user_id=data['user_id'], message=data['message'])
+    db.session.add(new_message)
+    db.session.commit()
+
+    user = User.query.get(data['user_id'])
+    if user: 
+        username = user.username
+    else:
+        return
+    socketio.emit('receive_message', {'id': new_message.id, 'username': username, 'message': new_message.message})
 
 @app.route('/api/register', methods=['POST'])
 def register_user():
@@ -112,4 +127,4 @@ def get_users():
         return jsonify({'msg': 'Internal Server Error'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)

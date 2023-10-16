@@ -54,7 +54,6 @@ function Login({ onLogin }) {
     axios
       .post("http://127.0.0.1:5000/api/login", { username, password })
       .then((response) => {
-        console.log(response.data);
         localStorage.setItem("token", response.data.access_token);
         localStorage.setItem("user_id", response.data.user_id ? response.data.user_id.toString() : "");
         localStorage.setItem("username", username); 
