@@ -12,41 +12,51 @@ function Home({ onLogout }) {
   const socketRef = useRef();
 
   useEffect(() => {
+    axios.get("/api/messages")
+        .then(response => {
+            setMessages(response.data);
+        })
+        .catch(error => {
+            console.error("Error fetching messages:", error);
+        });
+        
     socketRef.current = io("http://localhost:5000");
-    socketRef.current.on("receive_message", (message) => {
-      setMessages((prevMessages) => [...prevMessages, message]);
+
+    socketRef.current.on("receive_message", message => {
+        setMessages(prevMessages => [...prevMessages, message]);
     });
 
     return () => {
-      socketRef.current.disconnect();
+        socketRef.current.disconnect();
     };
-  }, []);
+}, []);
 
-  function handleSendMessage() {
+function handleSendMessage() {
     console.log("handleSendMessage is called");
     console.log("newMessage:", newMessage);
-  
-    if (newMessage.trimEnd() !== "") {
-      const user_id = parseInt(localStorage.getItem("user_id"), 10);
-      console.log("user_id:", user_id);
-  
-      if (isNaN(user_id)) {
-        console.error("Invalid user_id:", localStorage.getItem("user_id"));
-        return;
-      }
-  
-      const messageData = { user_id, message: newMessage };
-      socketRef.current.emit('send_message', messageData);  
 
-      setMessages(prevMessages => [...prevMessages, {
-        id: prevMessages.length + 1,  
-        username: localStorage.getItem("username"), 
-        message: newMessage
-      }]);
-      
-      setNewMessage("");  
+    if (newMessage.trimEnd() !== "") {
+        const user_id = parseInt(localStorage.getItem("user_id"), 10);
+        console.log("user_id:", user_id);
+
+        if (isNaN(user_id)) {
+            console.error("Invalid user_id:", localStorage.getItem("user_id"));
+            return;
+        }
+
+        const messageData = { user_id, message: newMessage };
+        socketRef.current.emit('send_message', messageData);
+
+        setMessages(prevMessages => [...prevMessages, {
+            id: prevMessages.length + 1,
+            username: localStorage.getItem("username"),
+            message: newMessage
+        }]);
+
+        setNewMessage("");
     }
-  }
+}
+
   
 
   return (
