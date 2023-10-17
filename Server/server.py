@@ -40,7 +40,14 @@ def handle_message(data):
         username = user.username
     else:
         return
-    socketio.emit('receive_message', {'id': new_message.id, 'username': username, 'message': new_message.message})
+    
+    socketio.emit('receive_message', {
+        'id': new_message.id, 
+        'username': username, 
+        'message': new_message.message,
+        'clientId': data.get('clientId')
+    }, room=request.sid, include_self=False)
+
 
 @app.route('/api/register', methods=['POST'])
 def register_user():

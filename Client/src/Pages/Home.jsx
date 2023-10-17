@@ -3,6 +3,7 @@ import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
+import { v4 as uuidv4 } from "uuid";
 
 function Home({ onLogout }) {
   const [users, setUsers] = useState([]);
@@ -12,52 +13,69 @@ function Home({ onLogout }) {
   const socketRef = useRef();
 
   useEffect(() => {
-    axios.get("/api/messages")
-        .then(response => {
-            setMessages(response.data);
-        })
-        .catch(error => {
-            console.error("Error fetching messages:", error);
-        });
-        
+    axios
+      .get("/api/messages")
+      .then((response) => {
+        setMessages(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching messages:", error);
+      });
+
     socketRef.current = io("http://localhost:5000");
 
-    socketRef.current.on("receive_message", message => {
-        setMessages(prevMessages => [...prevMessages, message]);
+    socketRef.current.on("receive_message", (message) => {
+      if (!messages.some((msg) => msg.id === message.clientId)) {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      }
+    });
+
+    socketRef.current.on("connect", () => {
+      console.log("Connected to the server.");
+    });
+
+    socketRef.current.on("disconnect", () => {
+      console.log("Disconnected from the server.");
     });
 
     return () => {
-        socketRef.current.disconnect();
+      socketRef.current.disconnect();
     };
-}, []);
+  }, []);
 
-function handleSendMessage() {
+  function handleSendMessage() {
     console.log("handleSendMessage is called");
     console.log("newMessage:", newMessage);
 
     if (newMessage.trimEnd() !== "") {
-        const user_id = parseInt(localStorage.getItem("user_id"), 10);
-        console.log("user_id:", user_id);
+      const user_id = parseInt(localStorage.getItem("user_id"), 10);
+      console.log("user_id:", user_id);
 
-        if (isNaN(user_id)) {
-            console.error("Invalid user_id:", localStorage.getItem("user_id"));
-            return;
-        }
+      if (isNaN(user_id)) {
+        console.error("Invalid user_id:", localStorage.getItem("user_id"));
+        return;
+      }
 
-        const messageData = { user_id, message: newMessage };
-        socketRef.current.emit('send_message', messageData);
+      const clientMessageId = uuidv4();
+      const messageData = {
+        user_id,
+        message: newMessage,
+        clientId: clientMessageId,
+      };
+      socketRef.current.emit("send_message", messageData);
 
-        setMessages(prevMessages => [...prevMessages, {
-            id: prevMessages.length + 1,
-            username: localStorage.getItem("username"),
-            message: newMessage
-        }]);
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: clientMessageId,
+          username: localStorage.getItem("username"),
+          message: newMessage,
+        },
+      ]);
 
-        setNewMessage("");
+      setNewMessage("");
     }
-}
-
-  
+  }
 
   return (
     <div
