@@ -46,7 +46,7 @@ def handle_message(data):
         'username': username, 
         'message': new_message.message,
         'clientId': data.get('clientId')
-    }, room=request.sid, include_self=False)
+    }, skip_sid=request.sid)
 
 
 @app.route('/api/register', methods=['POST'])
