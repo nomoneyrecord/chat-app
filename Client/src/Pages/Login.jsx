@@ -97,7 +97,7 @@ function Login({ onLogin }) {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                />
+                required/>
                 <br />
                 <input
                   type="password"
@@ -105,7 +105,8 @@ function Login({ onLogin }) {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                />
+                required/>
+                {error && <p className="text-danger">{error}</p>}
                 <br />
                 <button
                   className="btn btn-primary w-50 mx-auto"

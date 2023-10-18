@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from "react-router-dom";
 import io from "socket.io-client";
 import { v4 as uuidv4 } from "uuid";
+import "../App.css";
 
 function Home({ onLogout }) {
   const [users, setUsers] = useState([]);
@@ -108,7 +109,7 @@ function Header({ onLogout }) {
       style={{ backgroundColor: "#444", height: "60px" }}
     >
       <div className="text-white">Chat App Logo</div>
-      <button className="btn btn-light" onClick={handleLogoutClick}>
+      <button className="btn-light" style={{textAlign: 'center', display: 'block'}} onClick={handleLogoutClick}>
         Logout
       </button>
     </div>
@@ -140,7 +141,6 @@ function ChatList() {
   return (
     <div className="w-25 p-3" style={{ backgroundColor: "#555" }}>
       <div className="text-white">Chat Room 1</div>
-      <div className="text-white">Chat Room 2</div>
     </div>
   );
 }
@@ -151,6 +151,12 @@ function ChatWindow({
   setNewMessage,
   handleSendMessage,
 }) {
+  const chatEndRef = useRef(null);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSendMessage();
@@ -170,6 +176,7 @@ function ChatWindow({
             {message.username}: {message.message}
           </div>
         ))}
+        <div ref={chatEndRef} />
       </div>
       <form onSubmit={handleSubmit} className="d-flex">
         <input

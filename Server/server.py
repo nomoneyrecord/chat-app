@@ -88,7 +88,7 @@ def login():
         access_token = create_access_token(identity={'username': username})
         return jsonify(access_token=access_token, user_id=user.id), 200
     
-    return jsonify({"msg": "Bad username or password"}), 401
+    return jsonify({"msg": "Please use valid username and password"}), 401
 
 @app.route('/api/messages', methods=['GET'])
 def get_messages():
