@@ -19,6 +19,8 @@ function Login({ onLogin }) {
   const handleClose = () => {
     setShow(false);
     setSignUpError("");
+    setNewUsername("");
+    setNewPassword("");
   };
   const handleShow = () => setShow(true);
 
@@ -89,7 +91,7 @@ function Login({ onLogin }) {
           >
             <div className="card-body text-center">
               <h1 className="login-header">Chat Room Log In</h1>
-              {signUpError && <p style={{ color: "red" }}>{signUpError}</p>}
+             
               <form className="form-group" onSubmit={handleLogin}>
                 <input
                   type="text"
@@ -167,6 +169,7 @@ function Login({ onLogin }) {
                 onChange={(e) => setNewPassword(e.target.value)}
               />
             </Form.Group>
+            {signUpError && <p className="text-danger">{signUpError}</p>}
             <Button variant="primary" type="submit" onClick={handleSignUp}>
               Submit
             </Button>
