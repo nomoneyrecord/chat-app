@@ -23,7 +23,7 @@ function Home({ onLogout }) {
         console.error("Error fetching messages:", error);
       });
 
-    socketRef.current = io("http://localhost:5000");
+    socketRef.current = io("http://localhost:8000");
 
     socketRef.current.on("receive_message", (message) => {
       if (!messages.some((msg) => msg.id === message.clientId)) {
