@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager, create_access_token
 from dotenv import load_dotenv
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask import send_from_directory
+from flask import Response
 import os
 
 load_dotenv()
@@ -18,7 +20,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY')
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
-
+static_folder_path = '../Client'
+ 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
@@ -47,6 +50,14 @@ def handle_message(data):
         'message': new_message.message,
         'clientId': data.get('clientId')
     }, skip_sid=request.sid)
+
+@app .route('/health', methods=['GET'])
+def health_check():
+    return "app is running!", 200
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    return str(e), 500
 
 
 @app.route('/api/register', methods=['POST'])
@@ -132,6 +143,17 @@ def get_users():
         print(e)
         print("Error occurred while trying to get users")
         return jsonify({'msg': 'Internal Server Error'}), 500
+
+
+@app.route('/', defaults={'path': ''})
+
+@app.route('/<path:path>')
+def serve_react_app(path):
+    try:
+        return send_from_directory(static_folder_path, path)
+    except:
+        return send_from_directory(static_folder_path, 'index.html')
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

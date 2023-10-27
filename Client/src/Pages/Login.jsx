@@ -27,7 +27,7 @@ function Login({ onLogin }) {
   const handleSignUp = (e) => {
     e.preventDefault();
     axios
-      .post("http://127.0.0.1:5000/api/register", {
+      .post("/api/register", {
         username: newUserName,
         password: newPassword,
       })
@@ -54,7 +54,7 @@ function Login({ onLogin }) {
     setError("");
 
     axios
-      .post("http://127.0.0.1:5000/api/login", { username, password })
+      .post("/api/login", { username, password })
       .then((response) => {
         localStorage.setItem("token", response.data.access_token);
         localStorage.setItem("user_id", response.data.user_id ? response.data.user_id.toString() : "");

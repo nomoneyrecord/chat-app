@@ -155,7 +155,7 @@ function ChatWindow({
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages])
 
   const handleSubmit = (e) => {
     e.preventDefault();
