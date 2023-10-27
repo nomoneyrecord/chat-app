@@ -11,7 +11,7 @@ import os
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../Client/dist')
 socketio = SocketIO(app, cors_allowed_origins="*")
 CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
 bcrypt = Bcrypt(app)
@@ -146,13 +146,14 @@ def get_users():
 
 
 @app.route('/', defaults={'path': ''})
-
 @app.route('/<path:path>')
 def serve_react_app(path):
-    try:
-        return send_from_directory(static_folder_path, path)
-    except:
-        return send_from_directory(static_folder_path, 'index.html')
+    if path and (path.startswith("assets") or path.endswith(".svg") or path.endswith(".js") or path.endswith(".css")):
+        return send_from_directory(app.static_folder, path)
+    else:
+        print(f"Serving React app for path: {path}")
+        return app.send_static_file('index.html')
+
 
 
 if __name__ == '__main__':
