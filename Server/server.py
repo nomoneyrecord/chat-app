@@ -13,7 +13,8 @@ load_dotenv()
 
 app = Flask(__name__, static_folder='../Client/dist')
 socketio = SocketIO(app, cors_allowed_origins="*")
-CORS(app, resources={r"/api/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "https://chat-app-2-965z.onrender.com"]}})
+
 bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
