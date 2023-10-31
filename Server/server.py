@@ -39,7 +39,8 @@ def handle_message(data):
     db.session.add(new_message)
     db.session.commit()
 
-    user = User.query.get(data['user_id'])
+    user = db.session.query(User).get(data['user_id'])
+
     if user: 
         username = user.username
     else:
@@ -125,7 +126,8 @@ def create_message():
         db.session.add(new_message)
         db.session.commit()
 
-        user = User.query.get(new_message.user_id)
+        user = db.session.query(User).get(new_message.user_id)
+
         if user is None:
             print("Error: User not found")
             return jsonify({'msg': 'Internal Server Error'}), 500
@@ -158,4 +160,4 @@ def serve_react_app(path):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, port=8001)
+    socketio.run(app, debug=True)
