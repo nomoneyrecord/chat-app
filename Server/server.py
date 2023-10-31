@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 app = Flask(__name__, static_folder='../Client/dist')
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode='gevent')
 CORS(app, resources={r"/api/*": {"origins": ["http://localhost:5173", "https://chat-app-2-965z.onrender.com"]}})
 
 bcrypt = Bcrypt(app)
