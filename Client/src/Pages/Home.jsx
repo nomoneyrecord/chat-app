@@ -23,8 +23,7 @@ function Home({ onLogout }) {
         console.error("Error fetching messages:", error);
       });
 
-      const socketURL = process.env.REACT_APP_SOCKETIO_URL || "http://localhost:8000";
-      socketRef.current = io(socketURL);
+      socketRef.current = io();
       
 
     socketRef.current.on("receive_message", (message) => {

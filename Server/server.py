@@ -158,4 +158,4 @@ def serve_react_app(path):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, port=8001)
