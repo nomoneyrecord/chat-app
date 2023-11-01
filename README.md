@@ -6,7 +6,7 @@ A simple and straighforward full-stack chat app using React, Bootstrap, Axios, F
 
 <br>
 
-Try it [here](https://chat-app-2-965z.onrender.com/login)
+Try it [here](https://chat-app-2-965z.onrender.com)
 
 <br>
 

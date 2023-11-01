@@ -26,6 +26,7 @@ function Home({ onLogout }) {
       const socketURL = process.env.REACT_APP_SOCKETIO_URL || "http://127.0.0.1:8000";
       socketRef.current = io(socketURL);
       
+      console.log(process.env.REACT_APP_SOCKETIO_URL)
 
     socketRef.current.on("receive_message", (message) => {
       if (!messages.some((msg) => msg.id === message.clientId)) {
