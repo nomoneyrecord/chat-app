@@ -23,10 +23,11 @@ function Home({ onLogout }) {
         console.error("Error fetching messages:", error);
       });
 
-      const socketURL = process.env.REACT_APP_SOCKETIO_URL || "http://127.0.0.1:8000";
-      socketRef.current = io(socketURL);
-      
-      
+    const socketURL =
+      import.meta.env.VITE_REACT_APP_SOCKETIO_URL || "http://127.0.0.1:8000";
+    socketRef.current = io(socketURL);
+
+    console.log("Socket URL:", socketURL);
 
     socketRef.current.on("receive_message", (message) => {
       if (!messages.some((msg) => msg.id === message.clientId)) {
@@ -112,7 +113,11 @@ function Header({ onLogout }) {
       style={{ backgroundColor: "#444", height: "60px" }}
     >
       <div className="text-white">Chat App Logo</div>
-      <button className="btn-light" style={{textAlign: 'center', display: 'block'}} onClick={handleLogoutClick}>
+      <button
+        className="btn-light"
+        style={{ textAlign: "center", display: "block" }}
+        onClick={handleLogoutClick}
+      >
         Logout
       </button>
     </div>
@@ -158,7 +163,7 @@ function ChatWindow({
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages])
+  }, [messages]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
