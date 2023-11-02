@@ -23,7 +23,8 @@ function Home({ onLogout }) {
         console.error("Error fetching messages:", error);
       });
 
-  
+    const socketURL =
+      import.meta.env.VITE_REACT_APP_SOCKETIO_URL || "http://127.0.0.1:8000";
     socketRef.current = io(socketURL);
 
     console.log("Socket URL:", socketURL);
