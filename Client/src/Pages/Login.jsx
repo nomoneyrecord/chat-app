@@ -56,9 +56,9 @@ function Login({ onLogin }) {
     axios
       .post("/api/login", { username, password })
       .then((response) => {
-        localStorage.setItem("token", response.data.access_token);
-        localStorage.setItem("user_id", response.data.user_id ? response.data.user_id.toString() : "");
-        localStorage.setItem("username", username); 
+        sessionStorage.setItem("token", response.data.access_token);
+        sessionStorage.setItem("user_id", response.data.user_id ? response.data.user_id.toString() : "");
+        sessionStorage.setItem("username", username); 
         onLogin();
         setLoading(false);
         navigate('/');

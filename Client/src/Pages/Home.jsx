@@ -53,11 +53,11 @@ function Home({ onLogout }) {
     console.log("newMessage:", newMessage);
 
     if (newMessage.trimEnd() !== "") {
-      const user_id = parseInt(localStorage.getItem("user_id"), 10);
+      const user_id = parseInt(sessionStorage.getItem("user_id"), 10);
       console.log("user_id:", user_id);
 
       if (isNaN(user_id)) {
-        console.error("Invalid user_id:", localStorage.getItem("user_id"));
+        console.error("Invalid user_id:", sessionStorage.getItem("user_id"));
         return;
       }
 
@@ -73,7 +73,7 @@ function Home({ onLogout }) {
         ...prevMessages,
         {
           id: clientMessageId,
-          username: localStorage.getItem("username"),
+          username: sessionStorage.getItem("username"),
           message: newMessage,
         },
       ]);
